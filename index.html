@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOLO-VISION | Proje Paneli</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- TensorFlow.js ve Teachable Machine Kütüphaneleri -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: linear-gradient(rgba(17, 24, 39, 0.95), rgba(17, 24, 39, 0.98)), url('https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #F3F4F6;
+        }
+        .info-card {
+            background-color: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #welcome-modal {
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+        #camera-feed-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background-color: #111827;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        #camera-feed-container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+         audio::-webkit-media-controls-panel {
+            background-color: #374151;
+        }
+        audio::-webkit-media-controls-play-button,
+        audio::-webkit-media-controls-mute-button {
+            background-color: #9CA3AF;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Sesli Yönerge Modalı -->
+    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300">
+        <div class="bg-gray-800 rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
+            <img src="logo111111.png" alt="HOLO-VISION Logosu" class="h-20 w-auto mx-auto mb-4" onerror="this.onerror=null;this.src='https://placehold.co/200x100/374151/FFFFFF?text=Logo';">
+            <h2 class="text-2xl font-bold text-white mb-2">Sesli Yönerge</h2>
+            <p class="text-gray-400 mb-6">Uygulamayı keşfetmeden önce sesli yönergeyi dinlemek ister misiniz?</p>
+            <div class="flex justify-center gap-4">
+                <button id="play-instruction-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-transform duration-200 hover:scale-105">Yönergeyi Oynat</button>
+                <button id="skip-modal-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-transform duration-200 hover:scale-105" aria-label="Sesli yönergeyi atla">Atla</button>
+            </div>
+        </div>
+    </div>
+    <audio id="voice-instruction">
+        <source src="sesli yonerge.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header id="hero-section" class="text-center py-16">
+            <div class="flex justify-center mb-8">
+                <img src="logo111111.png" alt="HOLO-VISION Logosu" class="h-28 w-auto" onerror="this.onerror=null;this.src='https://placehold.co/200x100/111827/FFFFFF?text=Logo';">
+            </div>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-4">HOLO-VISION</h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">Engelsiz kentler için teknolojiyi adımlarınıza taşıyoruz.</p>
+            
+            <div class="mt-16">
+                 <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-lg max-w-md mx-auto border border-white/10">
+                    <img src="afis gorsel111.png" alt="Engelsiz Kentler Proje Afişi" class="rounded-lg w-full" onerror="this.onerror=null;this.src='https://placehold.co/600x800/1f2937/FFFFFF?text=Afiş+Yüklenemedi';">
+                </div>
+            </div>
+        </header>
+
+        <main class="space-y-16 mt-16">
+            
+            <!-- Kamera ve Sensör Entegrasyonu Bölümü -->
+            <section id="camera-sensor-section" aria-labelledby="camera-sensor-heading">
+                <h2 id="camera-sensor-heading" class="text-3xl font-bold mb-8 border-l-4 border-red-500 pl-4">Kamera ve Sensör Entegrasyonu</h2>
+                <div class="info-card rounded-xl p-6 shadow-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <!-- Kamera Bölümü -->
+                        <div class="flex flex-col items-center">
+                            <div id="camera-feed-container" class="mb-4">
+                                <div id="camera-loader" class="absolute inset-0 bg-black/50 flex-col items-center justify-center hidden z-10">
+                                    <p class="text-white">Yapay zeka modeli yükleniyor...</p>
+                                    <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500 mt-4"></div>
+                                </div>
+                            </div>
+                            <button id="start-camera-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform duration-200 hover:scale-105 flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-camera"></i>
+                                Kamerayı Başlat
+                            </button>
+                             <p id="camera-status" class="text-xs text-gray-500 mt-3 h-4"></p>
+                        </div>
+                        <!-- Sensör Simülasyonu Bölümü -->
+                        <div class="flex flex-col items-center">
+                             <p class="text-lg font-semibold text-gray-300 mb-4">Sensör Veri Ekranı</p>
+                             <div class="text-center mb-4">
+                                <p class="text-gray-400 mb-2">Algılanan Renk</p>
+                                <div id="color-display" class="w-32 h-32 rounded-lg shadow-inner border-4 border-gray-700 transition-colors duration-500 flex items-center justify-center bg-gray-900">
+                                   <i id="color-icon" class="ph-fill ph-paint-brush text-4xl text-gray-500"></i>
+                                </div>
+                            </div>
+                            <div id="detection-status" class="h-20 flex flex-col items-center justify-center text-center">
+                                <p class="text-xl font-semibold text-gray-500">Tespit bekleniyor...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hovercode İstatistik Paneli Bölümü -->
+            <section id="stats-section">
+                <h2 class="text-3xl font-bold mb-8 border-l-4 border-red-500 pl-4">Hovercode İstatistik Paneli</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="info-card rounded-xl p-6 flex items-center gap-4">
+                        <i class="ph-bold ph-qr-code text-4xl text-green-400"></i>
+                        <div>
+                            <p class="text-sm text-gray-400">Toplam Tarama</p>
+                            <p class="text-3xl font-bold text-white" data-stat="1482"></p>
+                        </div>
+                    </div>
+                    <div class="info-card rounded-xl p-6 flex items-center gap-4">
+                        <i class="ph-bold ph-link text-4xl text-blue-400"></i>
+                        <div>
+                            <p class="text-sm text-gray-400">Aktif QR Kodları</p>
+                            <p class="text-3xl font-bold text-white" data-stat="5"></p>
+                        </div>
+                    </div>
+                    <div class="info-card rounded-xl p-6 flex items-center gap-4">
+                        <i class="ph-bold ph-trophy text-4xl text-yellow-400"></i>
+                        <div>
+                            <p class="text-sm text-gray-400">En Popüler Kod</p>
+                            <p class="text-2xl font-bold text-white">Park Alanı</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="info-card rounded-xl p-6 mt-6">
+                    <h3 class="text-lg font-semibold mb-4">Haftalık Tarama Trendi</h3>
+                    <div id="bar-chart" class="flex items-end justify-between h-40"></div>
+                </div>
+            </section>
+
+            <!-- Proje İşlevleri Bölümü -->
+            <section id="functions-section">
+                <h2 class="text-3xl font-bold mb-8 border-l-4 border-red-500 pl-4">Proje İşlevleri ve Sesli Bilgilendirme</h2>
+                <div id="islevKonteyneri" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-20 text-gray-500 text-sm">
+            <p>&copy; 2025 HOLO-VISION Takımı. Tüm hakları saklıdır.</p>
+        </footer>
+    </div>
+
+    <script>
+        const islevKartlari = [
+            { id: 1, islevAdi: "Otobüs Durağı", aciklama: "Güvenli rota kartı...", gorselURL: "DURAK.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_23b626311a.mp3", className: "Durak", renk: { r: 34, g: 197, b: 94 } },
+            { id: 2, islevAdi: "Hastane Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "HASTANE.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/11/17/audio_8e42d29941.mp3", className: "Hastane Alan", renk: { r: 59, g: 130, b: 246 } },
+            { id: 3, islevAdi: "Okul Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "OKUL.png", sesURL: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c74434.mp3", className: "Okul", renk: { r: 249, g: 115, b: 22 } },
+            { id: 4, islevAdi: "Park Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "PARK.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1b3b27c67e.mp3", className: "Park Alan", renk: { r: 139, g: 92, b: 246 } },
+            { id: 5, islevAdi: "Ticari Alan", aciklama: "Güvenli rota kartı...", gorselURL: "TİCARİ.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_e097a671a5.mp3", className: "Ticari Alan", renk: { r: 234, g: 179, b: 8 } }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initWelcomeModal();
+            initCameraSensorIntegration();
+            initStatsDashboard();
+            kartlariOlustur();
+        });
+
+        function initWelcomeModal() {
+            const welcomeModal = document.getElementById('welcome-modal');
+            const modalContent = document.getElementById('modal-content');
+            const playBtn = document.getElementById('play-instruction-btn');
+            const skipBtn = document.getElementById('skip-modal-btn');
+            const instructionAudio = document.getElementById('voice-instruction');
+
+            if (!welcomeModal || !modalContent || !skipBtn || !instructionAudio || !playBtn) return;
+
+            setTimeout(() => {
+                welcomeModal.style.display = 'flex';
+                setTimeout(() => {
+                    welcomeModal.classList.add('opacity-100');
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }, 500);
+
+            const closeModal = () => {
+                instructionAudio.pause();
+                instructionAudio.currentTime = 0;
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    welcomeModal.classList.add('opacity-0');
+                    setTimeout(() => welcomeModal.style.display = 'none', 300);
+                }, 300);
+            };
+            
+            playBtn.addEventListener('click', () => {
+                instructionAudio.play().catch(error => console.log("Ses oynatma hatası:", error));
+            });
+                
+            skipBtn.addEventListener('click', closeModal);
+        }
+
+        function initCameraSensorIntegration() {
+            const startBtn = document.getElementById('start-camera-btn');
+            const statusEl = document.getElementById('camera-status');
+            const loader = document.getElementById('camera-loader');
+            const cameraContainer = document.getElementById('camera-feed-container');
+            const colorDisplay = document.getElementById('color-display');
+            const detectionStatus = document.getElementById('detection-status');
+            const colorIcon = document.getElementById('color-icon');
+            
+            const URL = "https://teachablemachine.withgoogle.com/models/DI56O3fOQ/";
+
+            let model, webcam, recognitionInterval;
+
+            startBtn.addEventListener('click', async () => {
+                if (recognitionInterval) {
+                    stopRecognition();
+                    return;
+                }
+                
+                startBtn.disabled = true;
+                loader.style.display = 'flex';
+                statusEl.textContent = "Kamera başlatılıyor ve model yükleniyor...";
+
+                try {
+                    const modelURL = URL + "model.json";
+                    const metadataURL = URL + "metadata.json";
+
+                    model = await tmImage.load(modelURL, metadataURL);
+                    
+                    const flip = true; 
+                    webcam = new tmImage.Webcam(cameraContainer.clientWidth, cameraContainer.clientHeight, flip); 
+                    await webcam.setup(); 
+                    await webcam.play();
+                    
+                    cameraContainer.appendChild(webcam.canvas);
+                    
+                    startBtn.innerHTML = '<i class="ph-bold ph-stop"></i> Kamerayı Durdur';
+                    statusEl.textContent = "Kamera aktif. Bir kart gösterin.";
+                    loader.style.display = 'none';
+                    startBtn.disabled = false;
+                    
+                    recognitionInterval = window.setInterval(predict, 200);
+
+                } catch (err) {
+                    statusEl.textContent = "Hata: Kamera başlatılamadı veya model yüklenemedi.";
+                    console.error("Hata:", err);
+                    loader.style.display = 'none';
+                    startBtn.disabled = false;
+                }
+            });
+
+            function stopRecognition() {
+                if (recognitionInterval) clearInterval(recognitionInterval);
+                recognitionInterval = null;
+                if (webcam) {
+                    webcam.stop();
+                    if(webcam.canvas && webcam.canvas.parentNode) {
+                       webcam.canvas.parentNode.removeChild(webcam.canvas);
+                    }
+                }
+                startBtn.innerHTML = '<i class="ph-bold ph-camera"></i> Kamerayı Başlat';
+                statusEl.textContent = "";
+                startBtn.disabled = false;
+                resetSensorDisplay();
+            }
+
+            async function predict() {
+                if (!webcam || !model) return;
+                
+                const prediction = await model.predict(webcam.canvas);
+                let detected = false;
+                for (let i = 0; i < prediction.length; i++) {
+                    const className = prediction[i].className;
+                    const probability = prediction[i].probability;
+
+                    if (probability > 0.95) {
+                        const kart = islevKartlari.find(k => k.className === className);
+                        if (kart) {
+                            updateSensorDisplay(kart);
+                            detected = true;
+                            break; 
+                        }
+                    }
+                }
+                if (!detected) {
+                    resetSensorDisplay();
+                }
+            }
+
+            function updateSensorDisplay(kart) {
+                const { r, g, b } = kart.renk;
+                const hexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+                
+                colorDisplay.style.backgroundColor = hexColor;
+                if(colorIcon) colorIcon.style.display = 'none';
+                detectionStatus.innerHTML = `
+                    <i class="ph-bold ph-check-circle text-6xl text-green-400 mb-2"></i>
+                    <p class="text-xl font-bold text-white">Eşleşme Tespit Edildi!</p>
+                    <p class="text-lg text-gray-300">${kart.islevAdi}</p>
+                `;
+            }
+
+            function resetSensorDisplay() {
+                colorDisplay.style.backgroundColor = 'transparent';
+                if(colorIcon) colorIcon.style.display = 'block';
+                detectionStatus.innerHTML = `<p class="text-xl font-semibold text-gray-500">Tespit bekleniyor...</p>`;
+            }
+        }
+
+        function initStatsDashboard() {
+            const statElements = document.querySelectorAll('[data-stat]');
+            statElements.forEach(el => {
+                const finalValue = parseInt(el.dataset.stat, 10);
+                let startValue = 0;
+                const duration = 2000;
+                const stepTime = Math.max(1, Math.abs(Math.floor(duration / finalValue)));
+                
+                const timer = setInterval(() => {
+                    startValue += 1;
+                    if (startValue >= finalValue) {
+                        el.textContent = finalValue;
+                        clearInterval(timer);
+                    } else {
+                        el.textContent = startValue;
+                    }
+                }, stepTime);
+            });
+
+            const chart = document.getElementById('bar-chart');
+            if(chart) {
+                const days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+                const data = [30, 50, 75, 60, 90, 110, 85]; 
+                days.forEach((day, index) => {
+                    const height = (data[index] / 120) * 100;
+                    const barWrapper = document.createElement('div');
+                    barWrapper.className = 'flex-1 flex flex-col items-center justify-end h-full';
+                    barWrapper.innerHTML = `
+                        <div class="w-3/4 bg-blue-500 rounded-t-lg transition-all duration-1000" style="height: 0%;" title="${data[index]} tarama"></div>
+                        <p class="text-xs text-gray-400 mt-2">${day}</p>
+                    `;
+                    chart.appendChild(barWrapper);
+
+                    setTimeout(() => {
+                        barWrapper.querySelector('div').style.height = `${height}%`;
+                    }, 200 * (index + 1));
+                });
+            }
+        }
+
+        function kartlariOlustur() {
+            const konteyner = document.getElementById('islevKonteyneri');
+            if (!konteyner) return;
+
+            islevKartlari.forEach(kart => {
+                const islevKarti = document.createElement('div');
+                islevKarti.className = 'info-card rounded-xl overflow-hidden shadow-lg flex flex-col';
+                islevKarti.innerHTML = `
+                    <div class="relative">
+                        <img src="${kart.gorselURL}" alt="${kart.islevAdi} için kart görseli" class="w-full h-52 object-contain p-4 bg-gray-900/50">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3 class="text-xl font-semibold text-white mb-2">${kart.islevAdi}</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex-grow">${kart.aciklama}</p>
+                         <audio controls class="w-full mt-auto" src="${kart.sesURL}" preload="none">
+                            Tarayıcınız ses dosyasını desteklemiyor.
+                        </audio>
+                    </div>
+                `;
+                konteyner.appendChild(islevKarti);
+            });
+        }
+    </script>
+</body>
+</html>
