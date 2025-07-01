@@ -33,15 +33,15 @@
             background-color: rgba(0,0,0,0.8);
             backdrop-filter: blur(5px);
         }
-        #camera-feed-container {
+        #webcam-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 4 / 3;
+            padding-top: 75%; /* 4:3 Aspect Ratio */
             background-color: #111827;
             border-radius: 0.5rem;
             overflow: hidden;
         }
-        #camera-feed-container canvas {
+        #webcam-container canvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -100,23 +100,18 @@
             <section id="camera-sensor-section" aria-labelledby="camera-sensor-heading">
                 <h2 id="camera-sensor-heading" class="text-3xl font-bold mb-8 border-l-4 border-red-500 pl-4">Kamera ve Sensör Entegrasyonu</h2>
                 <div class="info-card rounded-xl p-6 shadow-lg">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                         <!-- Kamera Bölümü -->
                         <div class="flex flex-col items-center">
-                            <div id="camera-feed-container" class="mb-4">
-                                <div id="camera-loader" class="absolute inset-0 bg-black/50 flex-col items-center justify-center hidden z-10">
-                                    <p class="text-white">Yapay zeka modeli yükleniyor...</p>
-                                    <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500 mt-4"></div>
-                                </div>
-                            </div>
-                            <button id="start-camera-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform duration-200 hover:scale-105 flex items-center justify-center gap-2">
+                            <div id="webcam-container" class="mb-4"></div>
+                            <div id="label-container" class="w-full space-y-2"></div>
+                             <button id="start-camera-btn" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform duration-200 hover:scale-105 flex items-center justify-center gap-2">
                                 <i class="ph-bold ph-camera"></i>
                                 Kamerayı Başlat
                             </button>
-                             <p id="camera-status" class="text-xs text-gray-500 mt-3 h-4"></p>
                         </div>
                         <!-- Sensör Simülasyonu Bölümü -->
-                        <div class="flex flex-col items-center">
+                        <div class="flex flex-col items-center sticky top-8">
                              <p class="text-lg font-semibold text-gray-300 mb-4">Sensör Veri Ekranı</p>
                              <div class="text-center mb-4">
                                 <p class="text-gray-400 mb-2">Algılanan Renk</p>
@@ -208,9 +203,9 @@
     <script>
         const islevKartlari = [
             { id: 1, islevAdi: "Otobüs Durağı", aciklama: "Güvenli rota kartı...", gorselURL: "DURAK.png", qrGorselURL: "Otobüs Durağı.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_23b626311a.mp3", className: "Durak", renk: { r: 34, g: 197, b: 94 }, hovercodeURL: "https://scanqr.to/bb21e661" },
-            { id: 2, islevAdi: "Hastane Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "HASTANE.png", qrGorselURL: "Hastane Alanı.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/11/17/audio_8e42d29941.mp3", className: "Hastane Alan", renk: { r: 59, g: 130, b: 246 }, hovercodeURL: "https://scanqr.to/a09a589f" },
+            { id: 2, islevAdi: "Hastane Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "HASTANE.png", qrGorselURL: "Hastane Alanı.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/11/17/audio_8e42d29941.mp3", className: "Hastane Alanı", renk: { r: 59, g: 130, b: 246 }, hovercodeURL: "https://scanqr.to/a09a589f" },
             { id: 3, islevAdi: "Okul Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "OKUL.png", qrGorselURL: "Okul Alanı.png", sesURL: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c74434.mp3", className: "Okul", renk: { r: 249, g: 115, b: 22 }, hovercodeURL: "https://scanqr.to/49c2c4f6" },
-            { id: 4, islevAdi: "Park Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "PARK.png", qrGorselURL: "Park Alanı.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1b3b27c67e.mp3", className: "Park Alan", renk: { r: 139, g: 92, b: 246 }, hovercodeURL: "https://scanqr.to/50366d18" },
+            { id: 4, islevAdi: "Park Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "PARK.png", qrGorselURL: "Park Alanı.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1b3b27c67e.mp3", className: "Park Alanı", renk: { r: 139, g: 92, b: 246 }, hovercodeURL: "https://scanqr.to/50366d18" },
             { id: 5, islevAdi: "Ticari Alan", aciklama: "Güvenli rota kartı...", gorselURL: "TİCARİ.png", qrGorselURL: "Ticari Alan.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_e097a671a5.mp3", className: "Ticari Alan", renk: { r: 234, g: 179, b: 8 }, hovercodeURL: "https://scanqr.to/473fbabe" }
         ];
 
@@ -259,103 +254,112 @@
 
         function initCameraSensorIntegration() {
             const startBtn = document.getElementById('start-camera-btn');
-            const statusEl = document.getElementById('camera-status');
-            const loader = document.getElementById('camera-loader');
-            const cameraContainer = document.getElementById('camera-feed-container');
+            const webcamContainer = document.getElementById('webcam-container');
+            const labelContainer = document.getElementById('label-container');
             const colorDisplay = document.getElementById('color-display');
             const detectionStatus = document.getElementById('detection-status');
             const colorIcon = document.getElementById('color-icon');
-            
+            const audioPlayer = new Audio();
+            let lastPlayedClass = null;
+
             const URL = "https://teachablemachine.withgoogle.com/models/DI56O3fOQ/";
+            let model, webcam, maxPredictions;
+            let isRunning = false;
 
-            let model, webcam, loopId;
-
-            startBtn.addEventListener('click', () => {
-                if (loopId) {
-                    stopRecognition();
+            startBtn.addEventListener('click', async () => {
+                if (!isRunning) {
+                    await init();
                 } else {
-                    init();
+                    stop();
                 }
             });
 
             async function init() {
                 startBtn.disabled = true;
-                loader.style.display = 'flex';
-                statusEl.textContent = "Kamera başlatılıyor ve model yükleniyor...";
+                startBtn.textContent = "Model Yükleniyor...";
+                const modelURL = URL + "model.json";
+                const metadataURL = URL + "metadata.json";
 
                 try {
-                    const modelURL = URL + "model.json";
-                    const metadataURL = URL + "metadata.json";
                     model = await tmImage.load(modelURL, metadataURL);
-                    
-                    const flip = true; 
-                    webcam = new tmImage.Webcam(cameraContainer.clientWidth, cameraContainer.clientHeight, flip); 
-                    await webcam.setup(); 
-                    await webcam.play();
-                    
-                    while (cameraContainer.firstChild && cameraContainer.firstChild.id !== 'camera-loader') {
-                        cameraContainer.removeChild(cameraContainer.firstChild);
-                    }
-                    cameraContainer.appendChild(webcam.canvas);
-                    
-                    startBtn.innerHTML = '<i class="ph-bold ph-stop"></i> Kamerayı Durdur';
-                    statusEl.textContent = "Kamera aktif. Bir kart gösterin.";
-                    loader.style.display = 'none';
-                    startBtn.disabled = false;
-                    
-                    loopId = window.requestAnimationFrame(loop);
+                    maxPredictions = model.getTotalClasses();
 
-                } catch (err) {
-                    statusEl.textContent = "Hata: Kamera başlatılamadı veya model yüklenemedi.";
-                    console.error("Hata:", err);
-                    loader.style.display = 'none';
+                    const flip = true;
+                    webcam = new tmImage.Webcam(300, 300, flip);
+                    await webcam.setup();
+                    await webcam.play();
+                    isRunning = true;
+                    window.requestAnimationFrame(loop);
+
+                    webcamContainer.innerHTML = ""; // Temizle
+                    webcamContainer.appendChild(webcam.canvas);
+                    labelContainer.innerHTML = ""; // Temizle
+                    for (let i = 0; i < maxPredictions; i++) {
+                        const div = document.createElement("div");
+                        div.className = "flex items-center gap-2 text-sm";
+                        div.innerHTML = `
+                            <span class="w-24 truncate text-gray-300"></span>
+                            <div class="prediction-bar-container flex-1">
+                                <div class="prediction-bar h-full"></div>
+                            </div>
+                        `;
+                        labelContainer.appendChild(div);
+                    }
+                    startBtn.textContent = "Kamerayı Durdur";
+                    startBtn.disabled = false;
+                } catch (e) {
+                    console.error(e);
+                    startBtn.textContent = "Hata - Tekrar Dene";
                     startBtn.disabled = false;
                 }
             }
 
-            function stopRecognition() {
-                window.cancelAnimationFrame(loopId);
-                loopId = null;
-                if (webcam) {
-                    webcam.stop();
-                    if(webcam.canvas && webcam.canvas.parentNode) {
-                       webcam.canvas.parentNode.removeChild(webcam.canvas);
-                    }
+            function stop() {
+                if (webcam) webcam.stop();
+                isRunning = false;
+                if (window.requestAnimationFrameId) {
+                    window.cancelAnimationFrame(window.requestAnimationFrameId);
                 }
-                startBtn.innerHTML = '<i class="ph-bold ph-camera"></i> Kamerayı Başlat';
-                statusEl.textContent = "";
-                startBtn.disabled = false;
-                resetSensorDisplay();
+                startBtn.textContent = "Kamerayı Başlat";
             }
 
             async function loop() {
-                if (webcam) {
-                    webcam.update();
-                    await predict();
-                    loopId = window.requestAnimationFrame(loop);
-                }
+                if (!isRunning) return;
+                webcam.update();
+                await predict();
+                window.requestAnimationFrameId = window.requestAnimationFrame(loop);
             }
 
             async function predict() {
-                if (!webcam || !model) return;
-                
                 const prediction = await model.predict(webcam.canvas);
                 let detected = false;
-                for (let i = 0; i < prediction.length; i++) {
-                    const className = prediction[i].className;
-                    const probability = prediction[i].probability;
+                for (let i = 0; i < maxPredictions; i++) {
+                    const pred = prediction[i];
+                    const labelDiv = labelContainer.childNodes[i];
+                    if (labelDiv) {
+                        const bar = labelDiv.querySelector('.prediction-bar');
+                        const percent = (pred.probability * 100).toFixed(0) + "%";
+                        bar.style.width = percent;
+                        bar.textContent = percent;
+                        labelDiv.querySelector('span').textContent = pred.className;
+                    }
 
-                    if (probability > 0.95) {
-                        const kart = islevKartlari.find(k => k.className === className);
+                    if (pred.probability > 0.60) {
+                        const kart = islevKartlari.find(k => k.className === pred.className);
                         if (kart) {
                             updateSensorDisplay(kart);
+                            if (lastPlayedClass !== kart.className) {
+                                audioPlayer.src = kart.sesURL;
+                                audioPlayer.play().catch(e => console.log("Eşleşme sesi oynatılamadı."));
+                                lastPlayedClass = kart.className;
+                            }
                             detected = true;
-                            break; 
                         }
                     }
                 }
                 if (!detected) {
                     resetSensorDisplay();
+                    lastPlayedClass = null;
                 }
             }
 
@@ -378,7 +382,7 @@
                 detectionStatus.innerHTML = `<p class="text-xl font-semibold text-gray-500">Tespit bekleniyor...</p>`;
             }
         }
-
+        
         function initStatsDashboard() {
             const statElements = document.querySelectorAll('[data-stat]');
             statElements.forEach(el => {
