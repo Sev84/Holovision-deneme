@@ -170,6 +170,34 @@
                 <div id="islevKonteyneri" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </section>
 
+            <!-- Dinamik QR Kod Yönetimi Bölümü -->
+            <section id="dynamic-qr-section">
+                <h2 class="text-3xl font-bold mb-8 border-l-4 border-red-500 pl-4">Dinamik QR Kod Yönetimi</h2>
+                <div id="dinamikQrKonteyneri" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+            </section>
+
+            <!-- QR Kod Kart Tasarımları Bölümü -->
+            <section id="qrcards-section">
+                <h2 class="text-3xl font-bold mb-8 border-l-4 border-red-500 pl-4">QR Kod Kart Tasarımları</h2>
+                <div class="bg-gray-800/80 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-lg border border-white/10">
+                    <img src="KARTLAR.png" alt="QR Kod Kart Tasarımları" class="rounded-lg w-full" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/FFFFFF?text=Tasarım+Görseli+Yüklenemedi';">
+                </div>
+            </section>
+
+            <!-- Proje Yönergesi Bölümü -->
+            <section id="yonerge-section">
+                <h2 class="text-3xl font-bold mb-8 border-l-4 border-red-500 pl-4">Proje Yönergesi ve Kart Detayı</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-800/80 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-lg border border-white/10">
+                        <h3 class="text-xl font-semibold text-white mb-4 text-center">Genel İşleyiş</h3>
+                        <img src="YONERGE.png" alt="Proje Yönergesi" class="rounded-lg w-full" onerror="this.onerror=null;this.src='https://placehold.co/600x800/1f2937/FFFFFF?text=Yönerge+Yüklenemedi';">
+                    </div>
+                    <div class="bg-gray-800/80 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-lg border border-white/10">
+                        <h3 class="text-xl font-semibold text-white mb-4 text-center">Örnek Kart Açıklaması</h3>
+                        <img src="KART YONERGE.png" alt="Örnek Kart Yönergesi" class="rounded-lg w-full" onerror="this.onerror=null;this.src='https://placehold.co/600x800/1f2937/FFFFFF?text=Kart+Detayı+Yüklenemedi';">
+                    </div>
+                </div>
+            </section>
         </main>
 
         <footer class="text-center mt-20 text-gray-500 text-sm">
@@ -179,11 +207,11 @@
 
     <script>
         const islevKartlari = [
-            { id: 1, islevAdi: "Otobüs Durağı", aciklama: "Güvenli rota kartı...", gorselURL: "DURAK.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_23b626311a.mp3", className: "Durak", renk: { r: 34, g: 197, b: 94 } },
-            { id: 2, islevAdi: "Hastane Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "HASTANE.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/11/17/audio_8e42d29941.mp3", className: "Hastane Alan", renk: { r: 59, g: 130, b: 246 } },
-            { id: 3, islevAdi: "Okul Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "OKUL.png", sesURL: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c74434.mp3", className: "Okul", renk: { r: 249, g: 115, b: 22 } },
-            { id: 4, islevAdi: "Park Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "PARK.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1b3b27c67e.mp3", className: "Park Alan", renk: { r: 139, g: 92, b: 246 } },
-            { id: 5, islevAdi: "Ticari Alan", aciklama: "Güvenli rota kartı...", gorselURL: "TİCARİ.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_e097a671a5.mp3", className: "Ticari Alan", renk: { r: 234, g: 179, b: 8 } }
+            { id: 1, islevAdi: "Otobüs Durağı", aciklama: "Güvenli rota kartı...", gorselURL: "DURAK.png", qrGorselURL: "Otobüs Durağı.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_23b626311a.mp3", className: "Durak", renk: { r: 34, g: 197, b: 94 }, hovercodeURL: "https://scanqr.to/bb21e661" },
+            { id: 2, islevAdi: "Hastane Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "HASTANE.png", qrGorselURL: "Hastane Alanı.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/11/17/audio_8e42d29941.mp3", className: "Hastane Alan", renk: { r: 59, g: 130, b: 246 }, hovercodeURL: "https://scanqr.to/a09a589f" },
+            { id: 3, islevAdi: "Okul Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "OKUL.png", qrGorselURL: "Okul Alanı.png", sesURL: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c74434.mp3", className: "Okul", renk: { r: 249, g: 115, b: 22 }, hovercodeURL: "https://scanqr.to/49c2c4f6" },
+            { id: 4, islevAdi: "Park Alanı", aciklama: "Güvenli rota kartı...", gorselURL: "PARK.png", qrGorselURL: "Park Alanı.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1b3b27c67e.mp3", className: "Park Alan", renk: { r: 139, g: 92, b: 246 }, hovercodeURL: "https://scanqr.to/50366d18" },
+            { id: 5, islevAdi: "Ticari Alan", aciklama: "Güvenli rota kartı...", gorselURL: "TİCARİ.png", qrGorselURL: "Ticari Alan.png", sesURL: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_e097a671a5.mp3", className: "Ticari Alan", renk: { r: 234, g: 179, b: 8 }, hovercodeURL: "https://scanqr.to/473fbabe" }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -191,6 +219,7 @@
             initCameraSensorIntegration();
             initStatsDashboard();
             kartlariOlustur();
+            dinamikQrKodlariOlustur();
         });
 
         function initWelcomeModal() {
@@ -397,6 +426,23 @@
                     </div>
                 `;
                 konteyner.appendChild(islevKarti);
+            });
+        }
+        
+        function dinamikQrKodlariOlustur() {
+            const konteyner = document.getElementById('dinamikQrKonteyneri');
+            if (!konteyner) return;
+
+            islevKartlari.forEach(kart => {
+                const qrKarti = document.createElement('div');
+                qrKarti.className = 'info-card rounded-xl p-4 text-center card-hover-effect';
+                
+                qrKarti.innerHTML = `
+                    <img src="${kart.qrGorselURL}" alt="${kart.islevAdi} QR Kodu" class="mx-auto rounded-md p-2 bg-white">
+                    <h4 class="text-md font-semibold text-white mt-3">${kart.islevAdi}</h4>
+                    <a href="${kart.hovercodeURL}" target="_blank" class="text-xs text-blue-400 hover:text-blue-300 break-all">${kart.hovercodeURL}</a>
+                `;
+                konteyner.appendChild(qrKarti);
             });
         }
     </script>
